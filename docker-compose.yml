@@ -1,0 +1,95 @@
+version: '3.8'
+
+x-superset-image: &superset-image anhngd/superset:5.0.0
+x-superset-depends-on: &superset-depends-on
+  - db
+  - redis
+x-superset-volumes: &superset-volumes
+  # /app/pythonpath_docker will be appended to the PYTHONPATH in the final container
+  - ./docker:/app/docker
+  - superset_home:/app/superset_home
+  - ./superset_config.py:/app/pythonpath_docker/superset_config.py:ro
+
+services:
+  redis:
+    image: redis:7.2-alpine
+    container_name: superset_cache
+    restart: unless-stopped
+    ports:
+      - "16379:6379"
+    volumes:
+      - redis:/data
+
+  db:
+    env_file: docker/.env-non-dev
+    image: postgres:15-alpine
+    container_name: superset_db
+    restart: unless-stopped
+    ports:
+      - "15432:5432"
+    volumes:
+      - db_home:/var/lib/postgresql/data
+      - ./docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+
+  superset:
+    env_file: docker/.env-non-dev
+    image: *superset-image
+    container_name: superset_app
+    command: ["/app/docker/entrypoints/run-server.sh"]
+    user: "root"
+    restart: unless-stopped
+    ports:
+      - 8088:8088
+    depends_on: *superset-depends-on
+    volumes: *superset-volumes
+
+  superset-init:
+    image: *superset-image
+    container_name: superset_init
+    command: ["/app/docker/entrypoints/docker-bootstrap.sh"]
+    user: "root"
+    env_file: docker/.env-non-dev
+    depends_on: *superset-depends-on
+    volumes: *superset-volumes
+    healthcheck:
+      disable: true
+
+  superset-worker:
+    image: *superset-image
+    container_name: superset_worker
+    command: ["/app/docker/entrypoints/run-celery-worker.sh"]
+    user: "root"
+    env_file: docker/.env-non-dev
+    restart: unless-stopped
+    depends_on: *superset-depends-on
+    volumes: *superset-volumes
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A superset.tasks.celery_app:app inspect ping -d celery@$$HOSTNAME"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  superset-worker-beat:
+    image: *superset-image
+    container_name: superset_worker_beat
+    command: ["/app/docker/entrypoints/run-celery-beat.sh"]
+    user: "root"
+    env_file: docker/.env-non-dev
+    restart: unless-stopped
+    depends_on: *superset-depends-on
+    volumes: *superset-volumes
+    healthcheck:
+      disable: true
+
+volumes:
+  superset_home:
+    external: false
+  db_home:
+    external: false
+  redis:
+    external: false
+
+networks:
+  default:
+    name: superset-network
