@@ -1,4 +1,4 @@
-# JB BI Platform - Apache Superset
+# BI Platform - Apache Superset
 
 A modern Business Intelligence platform powered by Apache Superset, designed for data visualization, exploration, and dashboard creation.
 
@@ -28,6 +28,7 @@ This deployment uses a containerized architecture with the following services:
 
 - Docker Engine 20.10+
 - Docker Compose 2.0+
+- GNU Make (for convenient commands)
 - 4GB+ RAM available
 - 10GB+ disk space
 
@@ -40,8 +41,40 @@ git clone <repository-url>
 cd superset
 ```
 
-### 2. Start Services
+### 2. Configure Version (Optional)
 
+```bash
+# Set Superset version (default: 5.0.0)
+export SUPERSET_VERSION=5.0.0
+
+# Or use compose environment file
+export SUPERSET_VERSION=5.0.0
+```
+
+### 3. Start Services
+
+**Using Makefile (Recommended):**
+```bash
+# Start all services
+make start
+
+# Check service status  
+make status
+
+# View logs
+make logs
+
+# Stop services
+make stop
+
+# Restart services
+make restart
+
+# See all available commands
+make help
+```
+
+**Using Docker Compose directly:**
 ```bash
 # Start all services in detached mode
 docker-compose up -d
@@ -53,7 +86,7 @@ docker-compose ps
 docker-compose logs -f superset
 ```
 
-### 3. Access the Platform
+### 4. Access the Platform
 
 - **URL**: http://localhost:8088
 - **Username**: `admin`
@@ -105,6 +138,8 @@ Advanced settings are available in `superset_config.py`:
 - MySQL/MariaDB
 - SQLite
 - Microsoft SQL Server
+- **Google BigQuery** ✨
+- **ClickHouse** ✨
 - Oracle
 - And many more...
 
@@ -116,6 +151,18 @@ Advanced settings are available in `superset_config.py`:
 4. Enter connection details
 5. Test connection and save
 
+#### BigQuery Connection
+```
+bigquery://{project_id}/{dataset_name}
+```
+**Requirements**: Service account JSON key file or OAuth authentication
+
+#### ClickHouse Connection
+```
+clickhouse+native://{username}:{password}@{host}:{port}/{database}
+```
+**Default Port**: 9000 (native), 8123 (HTTP)
+
 ### File Upload Support
 
 Upload CSV, Excel, TSV, and JSON files directly:
@@ -126,6 +173,25 @@ Upload CSV, Excel, TSV, and JSON files directly:
 4. Create charts and dashboards
 
 ## 🔧 Development
+
+### Version Management
+
+The Superset version is configurable through environment variables:
+
+```bash
+# Using environment variable
+export SUPERSET_VERSION=5.0.1
+docker-compose up -d
+
+# Or with inline variable
+SUPERSET_VERSION=latest docker-compose up -d
+
+# Using the compose environment file
+echo "SUPERSET_VERSION=5.0.1" > compose.env
+SUPERSET_VERSION=$(grep SUPERSET_VERSION compose.env | cut -d'=' -f2) docker-compose up -d
+```
+
+**Available versions**: Check [Docker Hub](https://hub.docker.com/r/anhngd/superset/tags) for available tags.
 
 ### Local Development Setup
 
@@ -292,4 +358,4 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 
 ---
 
-**JB BI Platform** - Empowering data-driven decisions through beautiful visualizations and powerful analytics.
+**BI Platform** - Empowering data-driven decisions through beautiful visualizations and powerful analytics.

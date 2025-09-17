@@ -161,6 +161,6 @@ DASHBOARD_AUTO_REFRESH_INTERVALS = [
 ]
 
 # Custom branding
-APP_NAME = "JB BI Platform"
+APP_NAME = "BI Platform"
 APP_ICON = "/static/assets/images/superset-logo-horiz.png"
 FAVICONS = [{"href": "/static/assets/images/favicon.png"}]

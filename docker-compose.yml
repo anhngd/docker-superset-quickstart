@@ -1,6 +1,4 @@
-version: '3.8'
-
-x-superset-image: &superset-image anhngd/superset:5.0.0
+x-superset-image: &superset-image anhngd/superset:${SUPERSET_VERSION:-5.0.0}
 x-superset-depends-on: &superset-depends-on
   - db
   - redis

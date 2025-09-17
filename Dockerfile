@@ -19,6 +19,12 @@ RUN pip install \
     openpyxl \
     # Pillow for Alerts & Reports to generate PDFs of dashboards
     Pillow \
+    # BigQuery connector packages
+    google-cloud-bigquery \
+    sqlalchemy-bigquery \
+    # ClickHouse connector packages  
+    clickhouse-driver \
+    clickhouse-sqlalchemy \
     # install Playwright for taking screenshots for Alerts & Reports. This assumes the feature flag PLAYWRIGHT_REPORTS_AND_THUMBNAILS is enabled
     # That feature flag will default to True starting in 6.0.0
     # Playwright works only with Chrome.
