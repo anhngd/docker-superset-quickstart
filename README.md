@@ -1,4 +1,4 @@
-# JB BI Platform - Apache Superset
+# BI Platform - Apache Superset
 
 A modern Business Intelligence platform powered by Apache Superset, designed for data visualization, exploration, and dashboard creation.
 
@@ -292,4 +292,4 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 
 ---
 
-**JB BI Platform** - Empowering data-driven decisions through beautiful visualizations and powerful analytics.
+**BI Platform** - Empowering data-driven decisions through beautiful visualizations and powerful analytics.
